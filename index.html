@@ -55,44 +55,138 @@ button{border:0;border-radius:13px;padding:12px 16px;
  <div class="note">Rovia · نسخه آزمایشی</div>
 </div>
 
+
 <script>
-const chat=document.getElementById('chat');
-const form=document.getElementById('form');
-const input=document.getElementById('message');
+const chat = document.getElementById('chat');
+const form = document.getElementById('form');
+const input = document.getElementById('message');
 
-function addMessage(text,type){
- const el=document.createElement('div');
- el.className='msg '+type;
- el.textContent=text;
- chat.appendChild(el);
- chat.scrollTop=chat.scrollHeight;
+let userName = '';
+let lastTopic = '';
+
+function addMessage(text, type) {
+  const el = document.createElement('div');
+  el.className = 'msg ' + type;
+  el.textContent = text;
+  chat.appendChild(el);
+  chat.scrollTop = chat.scrollHeight;
 }
 
-function welcome(){
- addMessage('سلام! من Rovia هستم. چطور می‌تونم کمکت کنم؟','ai');
+function choose(list) {
+  return list[Math.floor(Math.random() * list.length)];
 }
-welcome();
 
-form.addEventListener('submit',function(e){
- e.preventDefault();
- const text=input.value.trim();
- if(!text)return;
- addMessage(text,'user');
- input.value='';
- addMessage(
-  'پیامت دریافت شد! برای پاسخ هوشمند واقعی، باید سرویس هوش مصنوعی را به‌صورت امن متصل کنیم.',
-  'ai'
- );
+function reply(message) {
+  const t = message.toLowerCase().trim();
+
+  if (/اسم من (.+)/.test(message)) {
+    userName = message.match(/اسم من (.+)/)[1].trim();
+    return `خوشبختم ${userName}! 😊 سعی می‌کنم در این گفت‌وگو اسمت رو به خاطر داشته باشم.`;
+  }
+
+  if (t.includes('اسمت چیه') || t.includes('اسم تو')) {
+    return 'من Rovia هستم؛ دستیار گفت‌وگویی تو! 🤖';
+  }
+
+  if (t.includes('سلام') || t === 'درود' || t === 'hi' || t === 'hello') {
+    return choose([
+      `سلام${userName ? ' ' + userName : ''}! 😊 امروز چه خبر؟`,
+      'سلام! خوش اومدی به Rovia. دوست داری دربارهٔ چی گپ بزنیم؟',
+      'سلام رفیق! 👋 چطور می‌تونم گفت‌وگومون رو شروع کنم؟'
+    ]);
+  }
+
+  if (t.includes('حالت چطوره') || t.includes('خوبی')) {
+    return choose([
+      'ممنون که پرسیدی! 😊 من آماده‌ام باهات گپ بزنم. تو چطوری؟',
+      'من آمادهٔ گفت‌وگو هستم! امروز روزت چطور گذشته؟',
+      'همه‌چیز برای یک گفت‌وگوی خوب آماده است! تو چه خبر؟'
+    ]);
+  }
+
+  if (t.includes('ممنون') || t.includes('مرسی') || t.includes('متشکرم')) {
+    return choose([
+      'خواهش می‌کنم! 😊',
+      'قابلی نداشت! هر وقت خواستی گپ می‌زنیم.',
+      'خوشحالم که تونستم کمکت کنم!'
+    ]);
+  }
+
+  if (t.includes('خداحافظ') || t.includes('فعلا')) {
+    return 'فعلاً! 👋 هر وقت برگشتی، می‌تونیم دوباره گپ بزنیم.';
+  }
+
+  if (t.includes('جوک') || t.includes('لطیفه')) {
+    return 'یه جوک کوتاه: چرا کامپیوتر سرما خورد؟ چون پنجره‌هاش باز مونده بود! 😄';
+  }
+
+  if (t.includes('چه کار') && t.includes('می‌تونی')) {
+    return 'فعلاً می‌تونم به بعضی پیام‌ها پاسخ بدم، گپ ساده بزنم و چند موضوع رو تشخیص بدم. برای پاسخ‌گویی آزاد و هوشمند باید به یک مدل هوش مصنوعی واقعی متصل بشم.';
+  }
+
+  if (t.includes('هوش مصنوعی') || t.includes('هوشمند')) {
+    lastTopic = 'هوش مصنوعی';
+    return 'هوش مصنوعی می‌تونه متن رو تحلیل کنه، به سؤال‌ها پاسخ بده و در انجام کارها کمک کنه. البته من در این نسخه هنوز به مدل واقعی متصل نیستم.';
+  }
+
+  if (t.includes('ناراحتم') || t.includes('حالم بده')) {
+    return 'متأسفم که حالت خوب نیست. ❤️ اگه دوست داری، می‌تونی برام بگی چی شده؛ با هم درباره‌اش حرف می‌زنیم.';
+  }
+
+  if (t.includes('بازی') || t.includes('گیم')) {
+    lastTopic = 'بازی';
+    return 'بازی‌ها موضوع جالبی برای گپ‌زدنن! 🎮 بیشتر چه سبک بازی‌ای دوست داری؟';
+  }
+
+  if (t.includes('مسی') || t.includes('رونالدو') || t.includes('فوتبال')) {
+    lastTopic = 'فوتبال';
+    return 'بیا دربارهٔ فوتبال گپ بزنیم! ⚽ بیشتر بازی‌ها رو دنبال می‌کنی یا اخبار بازیکن‌ها رو؟';
+  }
+
+  if (t.includes('چرا') || t.includes('چطور') || t.includes('چگونه')) {
+    return 'سؤال جالبیه! در این نسخهٔ ساده هنوز نمی‌تونم همهٔ سؤال‌ها رو واقعاً تحلیل کنم. برای پاسخ دقیق‌تر باید مغز هوش مصنوعی Rovia رو متصل کنیم.';
+  }
+
+  if (t.includes('آره') || t.includes('بله') || t.includes('نه')) {
+    if (lastTopic) {
+      return `متوجه شدم! هنوز داریم دربارهٔ ${lastTopic} گپ می‌زنیم. دوست داری بیشتر توضیح بدی؟`;
+    }
+  }
+
+  return choose([
+    'جالبه! بیشتر برام توضیح می‌دی؟',
+    'دوست دارم بیشتر دربارهٔ چیزی که گفتی بدونم. منظورت رو بیشتر توضیح می‌دی؟',
+    'می‌فهمم چی می‌گی؛ می‌تونی یکم بیشتر درباره‌اش بگی؟',
+    'موضوع خوبیه! دوست داری از کدوم بخشش شروع کنیم؟',
+    'هنوز نمی‌تونم همهٔ پیام‌ها رو مثل یک هوش مصنوعی واقعی بفهمم؛ ولی می‌تونیم گفت‌وگو رو ادامه بدیم. 😊'
+  ]);
+}
+
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+  const message = input.value.trim();
+  if (!message) return;
+
+  addMessage(message, 'user');
+  input.value = '';
+
+  const answer = reply(message);
+  addMessage(answer, 'ai');
 });
 
-document.getElementById('newChat').addEventListener('click',()=>{
- chat.replaceChildren();
- welcome();
+document.getElementById('newChat').addEventListener('click', function() {
+  chat.replaceChildren();
+  userName = '';
+  lastTopic = '';
+  addMessage('سلام! من Rovia هستم. دوست داری دربارهٔ چی گپ بزنیم؟', 'ai');
 });
 
-document.getElementById('settings').addEventListener('click',()=>{
- alert('تنظیمات اتصال هوش مصنوعی در نسخه بعدی اضافه می‌شود.');
+document.getElementById('settings').addEventListener('click', function() {
+  alert('نسخهٔ آزمایشی Rovia فعال است. اتصال هوش مصنوعی واقعی در مرحلهٔ بعد انجام می‌شود.');
 });
+
+addMessage('سلام! من Rovia هستم. 😊 می‌تونیم گپ بزنیم؛ دوست داری از چی شروع کنیم؟', 'ai');
 </script>
+
 </body>
 </html>
