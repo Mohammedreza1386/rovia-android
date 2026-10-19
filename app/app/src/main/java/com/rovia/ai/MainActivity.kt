@@ -1,18 +1,23 @@
+
 package com.rovia.ai
 
 import android.app.Activity
 import android.os.Bundle
 import android.graphics.Color
 import android.view.Gravity
-import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.widget.TextView
 
 class MainActivity : Activity() {
 
     private val bg = Color.rgb(11, 16, 32)
     private val panel = Color.rgb(23, 30, 51)
     private val accent = Color.rgb(124, 108, 255)
+
     private lateinit var chat: LinearLayout
     private lateinit var input: EditText
 
@@ -21,136 +26,114 @@ class MainActivity : Activity() {
 
         window.statusBarColor = bg
         window.navigationBarColor = bg
-        window.decorView.systemUiVisibility = 0
 
-        val root = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setBackgroundColor(bg)
-            setPadding(20, 18, 20, 14)
-            layoutDirection = View.LAYOUT_DIRECTION_RTL
-        }
+        val root = LinearLayout(this)
+        root.orientation = LinearLayout.VERTICAL
+        root.setBackgroundColor(bg)
+        root.setPadding(16, 16, 16, 12)
 
-        val header = TextView(this).apply {
-            text = "Rovia"
-            textSize = 30f
-            setTextColor(Color.WHITE)
-            gravity = Gravity.CENTER
-            setTypeface(null, 1)
-        }
-        root.addView(header, params(
-            ViewGroup.LayoutParams.MATCH_PARENT, 54
-        ))
+        val header = TextView(this)
+        header.text = "Rovia"
+        header.textSize = 30f
+        header.setTextColor(Color.WHITE)
+        header.gravity = Gravity.CENTER
+        root.addView(header, LinearLayout.LayoutParams(-1, 55))
 
-        val subtitle = TextView(this).apply {
-            text = "دستیار هوش مصنوعی شخصی تو"
-            textSize = 14f
-            setTextColor(Color.LTGRAY)
-            gravity = Gravity.CENTER
-        }
-        root.addView(subtitle, params(
-            ViewGroup.LayoutParams.MATCH_PARENT, 32
-        ))
+        val subtitle = TextView(this)
+        subtitle.text = "دستیار هوش مصنوعی شخصی تو"
+        subtitle.textSize = 14f
+        subtitle.setTextColor(Color.LTGRAY)
+        subtitle.gravity = Gravity.CENTER
+        root.addView(subtitle, LinearLayout.LayoutParams(-1, 36))
 
-        val scroll = ScrollView(this).apply {
-            isFillViewport = true
-            clipToPadding = false
-            setPadding(0, 16, 0, 16)
-        }
+        val scroll = ScrollView(this)
+        scroll.isFillViewport = true
 
-        chat = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            layoutDirection = View.LAYOUT_DIRECTION_RTL
-        }
+        chat = LinearLayout(this)
+        chat.orientation = LinearLayout.VERTICAL
         scroll.addView(chat)
 
-        root.addView(scroll, LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f
-        ))
-
-        addMessage(
-            "سلام! من Rovia هستم. چطور می‌تونم کمکت کنم؟",
-            false
+        root.addView(
+            scroll,
+            LinearLayout.LayoutParams( -1, 0, 1f)
         )
 
-        val composer = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
-            setPadding(0, 10, 0, 0)
-            layoutDirection = View.LAYOUT_DIRECTION_RTL
-        }
+        addMessage("سلام! من Rovia هستم. چطور می‌تونم کمکت کنم؟", false)
 
-        input = EditText(this).apply {
-            hint = "پیامت رو بنویس..."
-            textSize = 15f
-            setTextColor(Color.WHITE)
-            setHintTextColor(Color.GRAY)
-            setSingleLine(true)
-            setPadding(14, 10, 14, 10)
-            setBackgroundColor(panel)
-        }
+        val composer = LinearLayout(this)
+        composer.orientation = LinearLayout.HORIZONTAL
+        composer.gravity = Gravity.CENTER_VERTICAL
 
-        composer.addView(input, LinearLayout.LayoutParams(
-            0, 54, 1f
-        ).apply {
-            marginEnd = 8
-        })
+        input = EditText(this)
+        input.hint = "پیامت رو بنویس..."
+        input.setTextColor(Color.WHITE)
+        input.setHintTextColor(Color.LTGRAY)
+        input.textSize = 15f
+        input.setSingleLine(true)
+        input.setPadding(12, 8, 12, 8)
+        input.setBackgroundColor(panel)
 
-        val send = Button(this).apply {
-            text = "ارسال"
-            setTextColor(Color.WHITE)
-            setBackgroundTintList(
-                android.content.res.ColorStateList.valueOf(accent)
-            )
-        }
+        composer.addView(
+            input,
+            LinearLayout.LayoutParams(0, 52, 1f)
+        )
+
+        val send = Button(this)
+        send.text = "ارسال"
+        send.setTextColor(Color.WHITE)
+        send.setBackgroundTintList(
+            android.content.res.ColorStateList.valueOf(accent)
+        )
 
         send.setOnClickListener {
             val message = input.text.toString().trim()
+
             if (message.isNotEmpty()) {
                 addMessage(message, true)
                 input.text.clear()
                 addMessage(
-                    "برای پاسخ واقعی، اتصال هوش مصنوعی را در مرحله بعد فعال می‌کنیم.",
+                    "اتصال هوش مصنوعی هنوز فعال نشده است.",
                     false
                 )
             }
         }
 
-        composer.addView(send, LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT, 54
-        ))
+        composer.addView(
+            send,
+            LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, 52
+            )
+        )
 
-        root.addView(composer, params(
-            ViewGroup.LayoutParams.MATCH_PARENT, 64
-        ))
+        root.addView(
+            composer,
+            LinearLayout.LayoutParams(-1, 62)
+        )
 
         setContentView(root)
     }
 
     private fun addMessage(text: String, user: Boolean) {
-        val bubble = TextView(this).apply {
-            this.text = text
-            textSize = 15f
-            setTextColor(Color.WHITE)
-            setPadding(16, 12, 16, 12)
-            setBackgroundColor(if (user) accent else panel)
-            layoutDirection = View.LAYOUT_DIRECTION_RTL
-        }
+        val bubble = TextView(this)
+        bubble.text = text
+        bubble.textSize = 15f
+        bubble.setTextColor(Color.WHITE)
+        bubble.setPadding(14, 12, 14, 12)
+        bubble.setBackgroundColor(if (user) accent else panel)
 
-        val row = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = if (user) Gravity.START else Gravity.END
-            setPadding(0, 6, 0, 6)
-            addView(bubble, LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
+        val row = LinearLayout(this)
+        row.orientation = LinearLayout.HORIZONTAL
+        row.gravity = if (user) Gravity.END else Gravity.START
+        row.setPadding(0, 6, 0, 6)
+
+        row.addView(
+            bubble,
+            LinearLayout.LayoutParams(
+                (resources.displayMetrics.widthPixels * 0.75f).toInt(),
                 ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply {
-                width = (resources.displayMetrics.widthPixels * 0.72f).toInt()
-            })
-        }
+            )
+        )
 
         chat.addView(row)
     }
-
-    private fun params(width: Int, height: Int) =
-        LinearLayout.LayoutParams(width, height)
 }
