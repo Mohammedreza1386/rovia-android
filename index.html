@@ -7,186 +7,605 @@
 <meta name="theme-color" content="#0b1020">
 <title>Rovia AI</title>
 <style>
-*{box-sizing:border-box}
-body{
- margin:0;background:#0b1020;color:#f5f6ff;
- font-family:Tahoma,Arial,sans-serif;
- height:100dvh;display:flex;justify-content:center;
+:root {
+  --bg: #0b1020;
+  --panel: #171e33;
+  --panel2: #202944;
+  --accent: #7c6cff;
+  --text: #f5f6ff;
+  --muted: #aeb5ce;
+  --border: #303b5b;
 }
-.app{width:100%;max-width:700px;height:100dvh;
- display:flex;flex-direction:column;padding:16px}
-header{text-align:center;padding:12px}
-.logo{font-size:32px;font-weight:bold;color:#9b8cff}
-header p{color:#aeb5ce;font-size:13px}
-#chat{flex:1;overflow-y:auto;padding:10px 0}
-.msg{padding:13px 15px;border-radius:16px;
- margin:10px 0;max-width:88%;line-height:1.9;
- white-space:pre-wrap;overflow-wrap:anywhere}
-.ai{background:#171e33;margin-left:auto}
-.user{background:#6554e8;margin-right:auto}
-.composer{display:flex;gap:8px;padding:10px 0}
-input{min-width:0;flex:1;background:#171e33;
- color:white;border:1px solid #333d5c;border-radius:13px;
- padding:14px;font-size:15px;outline:none}
-button{border:0;border-radius:13px;padding:12px 16px;
- background:#7c6cff;color:white;font-size:14px;cursor:pointer}
-.actions{display:flex;gap:8px;justify-content:center}
-.actions button{background:#171e33;color:#d9d6ff}
-.note{text-align:center;color:#929bb8;font-size:11px;padding:5px}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Tahoma, Arial, sans-serif;
+  min-height: 100dvh;
+}
+button, input, textarea { font: inherit; }
+button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 12px;
+  background: var(--accent);
+  color: white;
+  padding: 11px 14px;
+}
+button:active { transform: scale(.98); }
+button:focus-visible, input:focus-visible {
+  outline: 2px solid #b5aaff;
+  outline-offset: 2px;
+}
+.app {
+  max-width: 900px;
+  min-height: 100dvh;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+}
+header {
+  text-align: center;
+  padding: 10px 0 14px;
+}
+.logo {
+  font-size: 34px;
+  font-weight: bold;
+  letter-spacing: .5px;
+  color: #a99cff;
+}
+.subtitle {
+  margin: 7px 0 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.top-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.secondary {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+}
+.layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 12px;
+}
+.sidebar, .chat-panel {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(23,30,51,.85);
+  min-height: 0;
+}
+.sidebar {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+.section-title {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 3px 0 12px;
+}
+#history {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  overflow-y: auto;
+}
+.history-item {
+  display: flex;
+  align-items: stretch;
+  gap: 5px;
+}
+.history-open {
+  flex: 1;
+  min-width: 0;
+  text-align: right;
+  background: #202944;
+  border: 1px solid transparent;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.history-open.active {
+  border-color: var(--accent);
+  background: #302958;
+}
+.history-delete {
+  padding: 8px;
+  background: #49283e;
+}
+.empty-history {
+  color: #8791af;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.chat-heading {
+  padding: 13px 15px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  color: #d9d6ff;
+}
+#chat {
+  flex: 1;
+  min-height: 260px;
+  max-height: 58dvh;
+  overflow-y: auto;
+  padding: 12px;
+  scroll-behavior: smooth;
+}
+.msg {
+  max-width: 88%;
+  width: fit-content;
+  padding: 11px 14px;
+  margin: 9px 0;
+  border-radius: 15px;
+  line-height: 1.9;
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.msg.ai {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  margin-left: auto;
+  border-bottom-right-radius: 5px;
+}
+.msg.user {
+  background: #6554d9;
+  margin-right: auto;
+  border-bottom-left-radius: 5px;
+}
+.composer {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+}
+#message {
+  min-width: 0;
+  flex: 1;
+  resize: none;
+  min-height: 48px;
+  max-height: 120px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 13px;
+  color: white;
+  background: #0f162a;
+  font-size: 14px;
+  outline: none;
+}
+#message::placeholder { color: #8993b1; }
+#send { min-height: 48px; }
+.footer {
+  text-align: center;
+  color: #7f8aa9;
+  font-size: 11px;
+  padding: 12px 4px 2px;
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 5;
+}
+.modal-backdrop.show { display: flex; }
+.modal {
+  width: 100%;
+  max-width: 420px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px;
+  line-height: 1.9;
+}
+.modal h2 { margin-top: 0; font-size: 19px; }
+.modal p { color: var(--muted); font-size: 13px; }
+.modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+@media (max-width: 620px) {
+  .app { padding: 9px; }
+  .layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .sidebar { padding: 9px; }
+  #history {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 3px;
+  }
+  .history-item { flex: 0 0 auto; max-width: 235px; }
+  .history-open { max-width: 175px; }
+  .empty-history { min-width: 100%; }
+  #chat { max-height: none; }
+  .chat-panel { min-height: 48dvh; }
+  .msg { max-width: 94%; }
+}
 </style>
 </head>
 <body>
 <div class="app">
- <header>
-  <div class="logo">Rovia</div>
-  <p>دستیار هوش مصنوعی شخصی تو</p>
-  <div class="actions">
-   <button id="newChat">گفت‌وگوی جدید</button>
-   <button id="settings">تنظیمات</button>
+  <header>
+    <div class="logo">Rovia</div>
+    <div class="subtitle">دستیار گفت‌وگویی شخصی تو</div>
+    <div class="top-actions">
+      <button id="newChat">＋ گفت‌وگوی جدید</button>
+      <button id="settings" class="secondary">⚙ تنظیمات</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="section-title">گفت‌وگوهای قبلی</div>
+      <div id="history"></div>
+    </aside>
+
+    <section class="chat-panel">
+      <div class="chat-heading" id="chatTitle">گفت‌وگوی جدید</div>
+      <div id="chat" aria-live="polite"></div>
+
+      <form id="form" class="composer">
+        <textarea id="message" rows="1"
+          placeholder="پیامت رو بنویس..."
+          aria-label="متن پیام"></textarea>
+        <button id="send" type="submit">ارسال</button>
+      </form>
+    </section>
+  </main>
+
+  <div class="footer">
+    Rovia AI · نسخهٔ آزمایشی · گفت‌وگوها روی همین مرورگر ذخیره می‌شوند
   </div>
- </header>
-
- <main id="chat" aria-live="polite"></main>
-
- <form class="composer" id="form">
-  <input id="message" placeholder="پیامت رو بنویس..." autocomplete="off">
-  <button type="submit">ارسال</button>
- </form>
- <div class="note">Rovia · نسخه آزمایشی</div>
 </div>
 
+<div class="modal-backdrop" id="settingsModal">
+  <section class="modal" role="dialog" aria-modal="true"
+    aria-labelledby="settingsTitle">
+    <h2 id="settingsTitle">تنظیمات Rovia</h2>
+    <p>گفت‌وگوها در حافظهٔ محلی همین مرورگر ذخیره می‌شوند. پاک‌کردن داده‌های مرورگر ممکن است آن‌ها را حذف کند.</p>
+    <p>این نسخه هنوز به مدل هوش مصنوعی واقعی وصل نیست.</p>
+    <div class="modal-actions">
+      <button id="exportChats">خروجی گرفتن از تاریخچه</button>
+      <button id="clearChats" class="secondary">پاک‌کردن همهٔ چت‌ها</button>
+      <button id="closeSettings" class="secondary">بستن</button>
+    </div>
+  </section>
+</div>
 
 <script>
+ 
 const chat = document.getElementById('chat');
 const form = document.getElementById('form');
 const input = document.getElementById('message');
+const historyBox = document.getElementById('history');
+const titleBox = document.getElementById('chatTitle');
 
-let userName = '';
-let lastTopic = '';
+const CHATS_KEY = 'rovia_chats_v2';
+const ACTIVE_KEY = 'rovia_active_v2';
+const NAME_KEY = 'rovia_name_v2';
 
-function addMessage(text, type) {
+function readChats() {
+  try {
+    const data = JSON.parse(localStorage.getItem(CHATS_KEY) || '[]');
+    return Array.isArray(data)
+      ? data.filter(c => c && typeof c.id === 'string' && Array.isArray(c.messages))
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+let chats = readChats();
+let activeId = localStorage.getItem(ACTIVE_KEY);
+
+function makeId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+function save() {
+  try {
+    localStorage.setItem(CHATS_KEY, JSON.stringify(chats));
+    if (activeId) localStorage.setItem(ACTIVE_KEY, activeId);
+    else localStorage.removeItem(ACTIVE_KEY);
+    return true;
+  } catch {
+    alert('ذخیره انجام نشد. ممکن است حافظهٔ مرورگر پر شده باشد.');
+    return false;
+  }
+}
+
+function currentChat() {
+  return chats.find(c => c.id === activeId);
+}
+
+function createChat() {
+  const c = {
+    id: makeId(),
+    title: 'گفت‌وگوی جدید',
+    messages: [],
+    updatedAt: Date.now()
+  };
+
+  chats.unshift(c);
+  activeId = c.id;
+  save();
+  renderAll();
+  input.focus();
+}
+
+function addBubble(text, type) {
   const el = document.createElement('div');
   el.className = 'msg ' + type;
   el.textContent = text;
   chat.appendChild(el);
+}
+
+function renderChat() {
+  chat.replaceChildren();
+  const c = currentChat();
+
+  if (!c || c.messages.length === 0) {
+    addBubble(
+      'سلام! من Rovia هستم 😊 از چی شروع کنیم؟',
+      'ai'
+    );
+  } else {
+    c.messages.forEach(m => addBubble(m.text, m.type));
+  }
+
+  titleBox.textContent = c ? c.title : 'گفت‌وگوی جدید';
   chat.scrollTop = chat.scrollHeight;
+}
+
+function renderHistory() {
+  historyBox.replaceChildren();
+
+  if (chats.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'empty-history';
+    empty.textContent = 'هنوز گفت‌وگویی نداری. یک چت جدید بساز!';
+    historyBox.appendChild(empty);
+    return;
+  }
+
+  chats.forEach(c => {
+    const row = document.createElement('div');
+    row.className = 'history-item';
+
+    const open = document.createElement('button');
+    open.className = 'history-open' + (c.id === activeId ? ' active' : '');
+    open.textContent = c.title || 'گفت‌وگوی جدید';
+    open.title = c.title;
+    open.onclick = () => {
+      activeId = c.id;
+      save();
+      renderAll();
+    };
+
+    const del = document.createElement('button');
+    del.className = 'history-delete';
+    del.textContent = '×';
+    del.title = 'حذف این گفت‌وگو';
+    del.setAttribute('aria-label', 'حذف ' + c.title);
+
+    del.onclick = () => {
+      if (!confirm('این گفت‌وگو برای همیشه از این مرورگر حذف شود؟')) return;
+
+      chats = chats.filter(x => x.id !== c.id);
+
+      if (activeId === c.id) {
+        activeId = chats.length ? chats[0].id : null;
+      }
+
+      save();
+
+      if (!activeId) createChat();
+      else renderAll();
+    };
+
+    row.append(open, del);
+    historyBox.appendChild(row);
+  });
+}
+
+function renderAll() {
+  renderChat();
+  renderHistory();
 }
 
 function choose(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
 
-function reply(message) {
+function answer(message) {
   const t = message.toLowerCase().trim();
+  const name = localStorage.getItem(NAME_KEY) || '';
 
-  if (/اسم من (.+)/.test(message)) {
-    userName = message.match(/اسم من (.+)/)[1].trim();
-    return `خوشبختم ${userName}! 😊 سعی می‌کنم در این گفت‌وگو اسمت رو به خاطر داشته باشم.`;
+  if (t.includes('اسمم چیه') || t.includes('اسم من چیه')) {
+    return name
+      ? `اسمی که قبلاً بهم گفتی ${name} است. 😊`
+      : 'هنوز اسمت رو بهم نگفتی. می‌تونی بنویسی: اسم من ...';
   }
 
-  if (t.includes('اسمت چیه') || t.includes('اسم تو')) {
-    return 'من Rovia هستم؛ دستیار گفت‌وگویی تو! 🤖';
-  }
-
-  if (t.includes('سلام') || t === 'درود' || t === 'hi' || t === 'hello') {
-    return choose([
-      `سلام${userName ? ' ' + userName : ''}! 😊 امروز چه خبر؟`,
-      'سلام! خوش اومدی به Rovia. دوست داری دربارهٔ چی گپ بزنیم؟',
-      'سلام رفیق! 👋 چطور می‌تونم گفت‌وگومون رو شروع کنم؟'
-    ]);
-  }
-
-  if (t.includes('حالت چطوره') || t.includes('خوبی')) {
-    return choose([
-      'ممنون که پرسیدی! 😊 من آماده‌ام باهات گپ بزنم. تو چطوری؟',
-      'من آمادهٔ گفت‌وگو هستم! امروز روزت چطور گذشته؟',
-      'همه‌چیز برای یک گفت‌وگوی خوب آماده است! تو چه خبر؟'
-    ]);
-  }
-
-  if (t.includes('ممنون') || t.includes('مرسی') || t.includes('متشکرم')) {
-    return choose([
-      'خواهش می‌کنم! 😊',
-      'قابلی نداشت! هر وقت خواستی گپ می‌زنیم.',
-      'خوشحالم که تونستم کمکت کنم!'
-    ]);
-  }
-
-  if (t.includes('خداحافظ') || t.includes('فعلا')) {
-    return 'فعلاً! 👋 هر وقت برگشتی، می‌تونیم دوباره گپ بزنیم.';
-  }
-
-  if (t.includes('جوک') || t.includes('لطیفه')) {
-    return 'یه جوک کوتاه: چرا کامپیوتر سرما خورد؟ چون پنجره‌هاش باز مونده بود! 😄';
-  }
-
-  if (t.includes('چه کار') && t.includes('می‌تونی')) {
-    return 'فعلاً می‌تونم به بعضی پیام‌ها پاسخ بدم، گپ ساده بزنم و چند موضوع رو تشخیص بدم. برای پاسخ‌گویی آزاد و هوشمند باید به یک مدل هوش مصنوعی واقعی متصل بشم.';
-  }
-
-  if (t.includes('هوش مصنوعی') || t.includes('هوشمند')) {
-    lastTopic = 'هوش مصنوعی';
-    return 'هوش مصنوعی می‌تونه متن رو تحلیل کنه، به سؤال‌ها پاسخ بده و در انجام کارها کمک کنه. البته من در این نسخه هنوز به مدل واقعی متصل نیستم.';
-  }
-
-  if (t.includes('ناراحتم') || t.includes('حالم بده')) {
-    return 'متأسفم که حالت خوب نیست. ❤️ اگه دوست داری، می‌تونی برام بگی چی شده؛ با هم درباره‌اش حرف می‌زنیم.';
-  }
-
-  if (t.includes('بازی') || t.includes('گیم')) {
-    lastTopic = 'بازی';
-    return 'بازی‌ها موضوع جالبی برای گپ‌زدنن! 🎮 بیشتر چه سبک بازی‌ای دوست داری؟';
-  }
-
-  if (t.includes('مسی') || t.includes('رونالدو') || t.includes('فوتبال')) {
-    lastTopic = 'فوتبال';
-    return 'بیا دربارهٔ فوتبال گپ بزنیم! ⚽ بیشتر بازی‌ها رو دنبال می‌کنی یا اخبار بازیکن‌ها رو؟';
-  }
-
-  if (t.includes('چرا') || t.includes('چطور') || t.includes('چگونه')) {
-    return 'سؤال جالبیه! در این نسخهٔ ساده هنوز نمی‌تونم همهٔ سؤال‌ها رو واقعاً تحلیل کنم. برای پاسخ دقیق‌تر باید مغز هوش مصنوعی Rovia رو متصل کنیم.';
-  }
-
-  if (t.includes('آره') || t.includes('بله') || t.includes('نه')) {
-    if (lastTopic) {
-      return `متوجه شدم! هنوز داریم دربارهٔ ${lastTopic} گپ می‌زنیم. دوست داری بیشتر توضیح بدی؟`;
+  const match = message.match(/اسم من\s+(.+)/);
+  if (match) {
+    const newName = match[1].trim().slice(0, 50);
+    if (newName) {
+      localStorage.setItem(NAME_KEY, newName);
+      return `خوشبختم ${newName}! 😊 این اسم را در همین مرورگر به خاطر می‌سپارم.`;
     }
   }
 
+  if (/سلام|درود|صبح بخیر|شب بخیر/.test(t)) {
+    return choose([
+      `سلام${name ? ' ' + name : ''}! 😊 خوش اومدی. چه خبر؟`,
+      'سلام! دوست داری امروز دربارهٔ چی گپ بزنیم؟',
+      'سلام رفیق! 👋 من آماده‌ام گفت‌وگو کنیم.'
+    ]);
+  }
+
+  if (/خوبی|حالت چطوره|چه خبر/.test(t)) {
+    return choose([
+      'ممنون که پرسیدی! من آمادهٔ گپ زدنم. تو چطوری؟',
+      'من اینجام تا باهات گفت‌وگو کنم 😊 روزت چطور گذشته؟',
+      'همه‌چیز آماده‌ست برای یک گپ خوب! تو چه خبر؟'
+    ]);
+  }
+
+  if (/ممنون|مرسی|متشکرم/.test(t)) {
+    return choose([
+      'خواهش می‌کنم! 😊',
+      'قابلی نداشت، خوشحالم که صحبت می‌کنیم.',
+      'هر وقت خواستی می‌تونیم ادامه بدیم!'
+    ]);
+  }
+
+  if (/خداحافظ|فعلاً|بای\b/.test(t)) {
+    return 'فعلاً! 👋 گفت‌وگوت ذخیره می‌شه و می‌تونی بعداً از تاریخچه برگردی.';
+  }
+
+  if (/ناراحتم|حالم بده|روز بدی/.test(t)) {
+    return 'متأسفم که روز سختی داری. ❤️ اگه دوست داری، بیشتر بگو چی شده تا درباره‌اش حرف بزنیم.';
+  }
+
+  if (/جوک|لطیفه/.test(t)) {
+    return 'یه جوک کوچیک 😄 چرا برنامه‌نویس همیشه خونسرده؟ چون یاد گرفته باگ‌ها رو یکی‌یکی حل کنه!';
+  }
+
+  if (/بازی|گیم|روبلاکس|hoi4|هارتس آو آیرن/.test(t)) {
+    return '🎮 چه جالب! بیشتر دربارهٔ چه بازی‌ای دوست داری حرف بزنیم؟';
+  }
+
+  if (/فوتبال|مسی|رونالدو/.test(t)) {
+    return '⚽ فوتبال همیشه موضوع جذابیه! دوست داری دربارهٔ بازیکن‌ها حرف بزنیم یا مسابقه‌ها؟';
+  }
+
+  if (/هوش مصنوعی|هوشمند|ربات/.test(t)) {
+    return 'هوش مصنوعی واقعی می‌تونه پیام رو تحلیل کنه و پاسخ تازه بسازه. Rovia در حال حاضر هنوز به مدل واقعی متصل نیست؛ جواب‌های این نسخه ساده و ازپیش‌تعریف‌شده‌اند.';
+  }
+
+  if (/چرا|چطور|چگونه/.test(t)) {
+    return 'سؤال خوبیه! این نسخه هنوز توانایی تحلیل آزاد همهٔ سؤال‌ها رو نداره. اگر موضوع رو ساده‌تر بگی، شاید بتونم با قواعد فعلی پاسخ مرتبط‌تری بدم.';
+  }
+
   return choose([
-    'جالبه! بیشتر برام توضیح می‌دی؟',
-    'دوست دارم بیشتر دربارهٔ چیزی که گفتی بدونم. منظورت رو بیشتر توضیح می‌دی؟',
-    'می‌فهمم چی می‌گی؛ می‌تونی یکم بیشتر درباره‌اش بگی؟',
-    'موضوع خوبیه! دوست داری از کدوم بخشش شروع کنیم؟',
-    'هنوز نمی‌تونم همهٔ پیام‌ها رو مثل یک هوش مصنوعی واقعی بفهمم؛ ولی می‌تونیم گفت‌وگو رو ادامه بدیم. 😊'
+    'می‌تونی کمی بیشتر درباره‌اش توضیح بدی؟ 😊',
+    'جالبه! دوست داری بیشتر در موردش حرف بزنیم؟',
+    'متوجه شدم که می‌خوای دربارهٔ این موضوع صحبت کنی. از کدوم بخش شروع کنیم؟',
+    'هنوز مغز هوش مصنوعی واقعی به Rovia وصل نشده؛ این پاسخ خودکار بود. می‌تونی بیشتر توضیح بدی؟'
   ]);
 }
 
-form.addEventListener('submit', function(e) {
+function sendMessage(text) {
+  text = text.trim();
+  if (!text) return;
+
+  if (!currentChat()) createChat();
+
+  const c = currentChat();
+  c.messages.push({ text, type: 'user' });
+
+  if (c.title === 'گفت‌وگوی جدید') {
+    c.title = text.length > 30 ? text.slice(0, 30) + '…' : text;
+  }
+
+  c.messages.push({ text: answer(text), type: 'ai' });
+  c.updatedAt = Date.now();
+
+  chats.sort((a, b) => b.updatedAt - a.updatedAt);
+  save();
+  renderAll();
+}
+
+form.addEventListener('submit', e => {
   e.preventDefault();
-  const message = input.value.trim();
-  if (!message) return;
-
-  addMessage(message, 'user');
+  const text = input.value;
+  if (!text.trim()) return;
   input.value = '';
-
-  const answer = reply(message);
-  addMessage(answer, 'ai');
+  input.style.height = '48px';
+  sendMessage(text);
 });
 
-document.getElementById('newChat').addEventListener('click', function() {
-  chat.replaceChildren();
-  userName = '';
-  lastTopic = '';
-  addMessage('سلام! من Rovia هستم. دوست داری دربارهٔ چی گپ بزنیم؟', 'ai');
+input.addEventListener('input', () => {
+  input.style.height = '48px';
+  input.style.height = Math.min(input.scrollHeight, 120) + 'px';
 });
 
-document.getElementById('settings').addEventListener('click', function() {
-  alert('نسخهٔ آزمایشی Rovia فعال است. اتصال هوش مصنوعی واقعی در مرحلهٔ بعد انجام می‌شود.');
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    form.requestSubmit();
+  }
 });
 
-addMessage('سلام! من Rovia هستم. 😊 می‌تونیم گپ بزنیم؛ دوست داری از چی شروع کنیم؟', 'ai');
+document.getElementById('newChat').addEventListener('click', createChat);
+
+const modal = document.getElementById('settingsModal');
+
+document.getElementById('settings').addEventListener('click', () => {
+  modal.classList.add('show');
+});
+
+document.getElementById('closeSettings').addEventListener('click', () => {
+  modal.classList.remove('show');
+});
+
+modal.addEventListener('click', e => {
+  if (e.target === modal) modal.classList.remove('show');
+});
+
+document.getElementById('exportChats').addEventListener('click', () => {
+  const data = JSON.stringify(chats, null, 2);
+  const blob = new Blob([data], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'rovia-chat-history.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('clearChats').addEventListener('click', () => {
+  if (!confirm('همهٔ گفت‌وگوهای ذخیره‌شده پاک شوند؟ این کار قابل بازگشت نیست.')) return;
+
+  chats = [];
+  activeId = null;
+  localStorage.removeItem(CHATS_KEY);
+  localStorage.removeItem(ACTIVE_KEY);
+  createChat();
+  modal.classList.remove('show');
+});
+
+if (!chats.length) {
+  createChat();
+} else {
+  if (!chats.some(c => c.id === activeId)) {
+    activeId = chats[0].id;
+  }
+  save();
+  renderAll();
+}
 </script>
-
 </body>
 </html>
