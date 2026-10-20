@@ -4,335 +4,170 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1020">
-<title>Rovia AI</title>
+<meta name="theme-color" content="#10131c">
+<title>Rovia | دستیار شخصی</title>
 <style>
-:root {
-  --bg: #0b1020;
-  --panel: #171e33;
-  --panel2: #202944;
-  --accent: #7c6cff;
-  --text: #f5f6ff;
-  --muted: #aeb5ce;
-  --border: #303b5b;
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Tahoma, Arial, sans-serif;
-  min-height: 100dvh;
-}
-button, input, textarea { font: inherit; }
-button {
-  cursor: pointer;
-  border: 0;
-  border-radius: 12px;
-  background: var(--accent);
-  color: white;
-  padding: 11px 14px;
-}
-button:active { transform: scale(.98); }
-button:focus-visible, input:focus-visible {
-  outline: 2px solid #b5aaff;
-  outline-offset: 2px;
-}
-.app {
-  max-width: 900px;
-  min-height: 100dvh;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  padding: 14px;
-}
-header {
-  text-align: center;
-  padding: 10px 0 14px;
-}
-.logo {
-  font-size: 34px;
-  font-weight: bold;
-  letter-spacing: .5px;
-  color: #a99cff;
-}
-.subtitle {
-  margin: 7px 0 14px;
-  font-size: 13px;
-  color: var(--muted);
-}
-.top-actions {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.secondary {
-  background: var(--panel2);
-  border: 1px solid var(--border);
-}
-.layout {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: 12px;
-}
-.sidebar, .chat-panel {
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  background: rgba(23,30,51,.85);
-  min-height: 0;
-}
-.sidebar {
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-}
-.section-title {
-  font-size: 13px;
-  color: var(--muted);
-  margin: 3px 0 12px;
-}
-#history {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  overflow-y: auto;
-}
-.history-item {
-  display: flex;
-  align-items: stretch;
-  gap: 5px;
-}
-.history-open {
-  flex: 1;
-  min-width: 0;
-  text-align: right;
-  background: #202944;
-  border: 1px solid transparent;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.history-open.active {
-  border-color: var(--accent);
-  background: #302958;
-}
-.history-delete {
-  padding: 8px;
-  background: #49283e;
-}
-.empty-history {
-  color: #8791af;
-  font-size: 12px;
-  line-height: 1.8;
-}
-.chat-panel {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.chat-heading {
-  padding: 13px 15px;
-  border-bottom: 1px solid var(--border);
-  font-size: 14px;
-  color: #d9d6ff;
-}
-#chat {
-  flex: 1;
-  min-height: 260px;
-  max-height: 58dvh;
-  overflow-y: auto;
-  padding: 12px;
-  scroll-behavior: smooth;
-}
-.msg {
-  max-width: 88%;
-  width: fit-content;
-  padding: 11px 14px;
-  margin: 9px 0;
-  border-radius: 15px;
-  line-height: 1.9;
-  font-size: 14px;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-.msg.ai {
-  background: var(--panel2);
-  border: 1px solid var(--border);
-  margin-left: auto;
-  border-bottom-right-radius: 5px;
-}
-.msg.user {
-  background: #6554d9;
-  margin-right: auto;
-  border-bottom-left-radius: 5px;
-}
-.composer {
-  display: flex;
-  align-items: end;
-  gap: 8px;
-  padding: 12px;
-  border-top: 1px solid var(--border);
-}
-#message {
-  min-width: 0;
-  flex: 1;
-  resize: none;
-  min-height: 48px;
-  max-height: 120px;
-  border: 1px solid var(--border);
-  border-radius: 13px;
-  padding: 13px;
-  color: white;
-  background: #0f162a;
-  font-size: 14px;
-  outline: none;
-}
-#message::placeholder { color: #8993b1; }
-#send { min-height: 48px; }
-.footer {
-  text-align: center;
-  color: #7f8aa9;
-  font-size: 11px;
-  padding: 12px 4px 2px;
-}
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.7);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 18px;
-  z-index: 5;
-}
-.modal-backdrop.show { display: flex; }
-.modal {
-  width: 100%;
-  max-width: 420px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 20px;
-  line-height: 1.9;
-}
-.modal h2 { margin-top: 0; font-size: 19px; }
-.modal p { color: var(--muted); font-size: 13px; }
-.modal-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 16px;
-}
-@media (max-width: 620px) {
-  .app { padding: 9px; }
-  .layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
-  .sidebar { padding: 9px; }
-  #history {
-    flex-direction: row;
-    overflow-x: auto;
-    padding-bottom: 3px;
-  }
-  .history-item { flex: 0 0 auto; max-width: 235px; }
-  .history-open { max-width: 175px; }
-  .empty-history { min-width: 100%; }
-  #chat { max-height: none; }
-  .chat-panel { min-height: 48dvh; }
-  .msg { max-width: 94%; }
+:root{color-scheme:dark;--bg:#10131c;--panel:#191e2a;--panel2:#202737;--text:#f4f6fb;--muted:#9ba6bb;--accent:#8b7cff;--border:#2d3547}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.app{display:flex;height:100dvh;max-width:1500px;margin:auto}
+.sidebar{width:270px;background:#141925;border-left:1px solid var(--border);padding:18px;display:flex;flex-direction:column;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;font-size:23px;font-weight:bold;padding:6px}
+.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#9a8bff,#5c49d8);display:grid;place-items:center;font-size:24px}
+.btn{border:1px solid var(--border);background:var(--panel2);color:var(--text);padding:11px 13px;border-radius:12px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:white}
+.btn:hover{filter:brightness(1.1)}
+.section-label{font-size:12px;color:var(--muted);margin-top:5px}
+.history{display:flex;flex-direction:column;gap:7px;overflow:auto;flex:1}
+.history-item{display:flex;align-items:center;gap:7px;border:1px solid transparent;border-radius:10px;padding:10px;background:transparent;color:var(--text);text-align:right}
+.history-item.active{background:var(--panel2);border-color:var(--border)}
+.history-item .name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-item .delete{color:#ff9a9a;padding:2px 5px}
+.sidebar-bottom{display:grid;gap:8px}
+.main{min-width:0;flex:1;display:flex;flex-direction:column}
+.topbar{height:68px;flex-shrink:0;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 22px;gap:12px}
+.top-title{font-weight:bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.status{font-size:12px;color:#8ce0b3;margin-top:5px}
+.messages{flex:1;overflow:auto;padding:26px max(18px,calc((100% - 800px)/2));display:flex;flex-direction:column;gap:18px;scroll-behavior:smooth}
+.welcome{text-align:center;margin:auto 0;color:var(--muted);line-height:2}
+.welcome .big-logo{font-size:48px;margin-bottom:8px}
+.welcome h1{font-size:27px;color:var(--text);margin:0}
+.welcome p{font-size:14px}
+.suggestions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:20px}
+.suggestion{border:1px solid var(--border);background:var(--panel);color:var(--text);border-radius:18px;padding:9px 12px;font-size:13px}
+.message{max-width:90%;display:flex;flex-direction:column;gap:6px}
+.message.user{align-self:flex-start}
+.message.bot{align-self:flex-end}
+.message-label{font-size:11px;color:var(--muted)}
+.bubble{padding:13px 15px;border-radius:16px;line-height:1.95;white-space:pre-wrap;overflow-wrap:anywhere}
+.user .bubble{background:#34315b;border-bottom-left-radius:5px}
+.bot .bubble{background:var(--panel);border:1px solid var(--border);border-bottom-right-radius:5px}
+.composer-wrap{padding:12px 18px 18px;border-top:1px solid var(--border)}
+.composer{max-width:800px;margin:auto;border:1px solid #3b4358;background:var(--panel);border-radius:17px;padding:10px;display:flex;align-items:flex-end;gap:8px}
+#message{flex:1;min-width:0;resize:none;max-height:160px;border:0;outline:0;background:transparent;color:var(--text);padding:9px;line-height:1.7}
+#message::placeholder{color:var(--muted)}
+#send{min-width:48px;height:44px}
+.hint{text-align:center;color:var(--muted);font-size:11px;margin-top:10px}
+.mobile-history{display:none}
+.modal-backdrop{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;padding:18px;z-index:5}
+.modal{width:min(420px,100%);background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:20px;display:grid;gap:13px}
+.modal input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text)}
+.modal-actions{display:flex;gap:8px;flex-wrap:wrap}
+.small{font-size:12px;color:var(--muted);line-height:1.8}
+@media(max-width:700px){
+ .app{height:100dvh}
+ .sidebar{display:none}
+ .topbar{height:60px;padding:0 13px}
+ .mobile-history{display:flex;gap:7px;padding:9px 12px;overflow-x:auto;border-bottom:1px solid var(--border)}
+ .mobile-history .btn{white-space:nowrap;font-size:12px;padding:8px 10px}
+ .messages{padding:18px 13px}
+ .message{max-width:95%}
+ .composer-wrap{padding:10px 10px 13px}
+ .welcome h1{font-size:23px}
 }
 </style>
 </head>
 <body>
 <div class="app">
-  <header>
-    <div class="logo">Rovia</div>
-    <div class="subtitle">دستیار گفت‌وگویی شخصی تو</div>
-    <div class="top-actions">
-      <button id="newChat">＋ گفت‌وگوی جدید</button>
-      <button id="settings" class="secondary">⚙ تنظیمات</button>
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">✦</div><span>Rovia</span></div>
+    <button class="btn primary" id="newChat">＋ گفت‌وگوی جدید</button>
+    <div class="section-label">تاریخچه گفتگوها</div>
+    <div class="history" id="history"></div>
+    <div class="sidebar-bottom">
+      <button class="btn" id="settings">⚙ تنظیمات</button>
+      <button class="btn" id="exportChats">⇩ خروجی تاریخچه</button>
     </div>
-  </header>
+  </aside>
 
-  <main class="layout">
-    <aside class="sidebar">
-      <div class="section-title">گفت‌وگوهای قبلی</div>
-      <div id="history"></div>
-    </aside>
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <div class="top-title" id="chatTitle">گفت‌وگوی جدید</div>
+        <div class="status">● روویا آماده است</div>
+      </div>
+      <button class="btn" id="mobileNew">＋ چت جدید</button>
+    </header>
 
-    <section class="chat-panel">
-      <div class="chat-heading" id="chatTitle">گفت‌وگوی جدید</div>
-      <div id="chat" aria-live="polite"></div>
+    <div class="mobile-history" id="mobileHistory"></div>
 
-      <form id="form" class="composer">
-        <textarea id="message" rows="1"
-          placeholder="پیامت رو بنویس..."
-          aria-label="متن پیام"></textarea>
-        <button id="send" type="submit">ارسال</button>
-      </form>
+    <section class="messages" id="chat" aria-live="polite">
+      <div class="welcome" id="welcome">
+        <div class="big-logo">✦</div>
+        <h1>سلام، من روویا هستم</h1>
+        <p>دستیار شخصی تو برای گفت‌وگو، ایده‌پردازی و یادگیری.</p>
+        <div class="suggestions">
+          <button class="suggestion" data-prompt="خودت را معرفی کن">معرفی روویا</button>
+          <button class="suggestion" data-prompt="چه کارهایی می‌توانی انجام بدهی؟">چه کارهایی بلدی؟</button>
+          <button class="suggestion" data-prompt="اسم من رضا است">آزمایش حافظه</button>
+        </div>
+      </div>
     </section>
-  </main>
 
-  <div class="footer">
-    Rovia AI · نسخهٔ آزمایشی · گفت‌وگوها روی همین مرورگر ذخیره می‌شوند
-  </div>
+    <div class="composer-wrap">
+      <form class="composer" id="form">
+        <textarea id="message" rows="1" placeholder="پیامت را برای روویا بنویس..." aria-label="پیام"></textarea>
+        <button class="btn primary" id="send" type="submit" aria-label="ارسال پیام">➤</button>
+      </form>
+      <div class="hint">Enter برای ارسال · Shift + Enter برای خط جدید</div>
+    </div>
+  </main>
 </div>
 
 <div class="modal-backdrop" id="settingsModal">
-  <section class="modal" role="dialog" aria-modal="true"
-    aria-labelledby="settingsTitle">
-    <h2 id="settingsTitle">تنظیمات Rovia</h2>
-    <p>گفت‌وگوها در حافظهٔ محلی همین مرورگر ذخیره می‌شوند. پاک‌کردن داده‌های مرورگر ممکن است آن‌ها را حذف کند.</p>
-    <p>این نسخه هنوز به مدل هوش مصنوعی واقعی وصل نیست.</p>
+  <div class="modal">
+    <h3 style="margin:0">تنظیمات روویا</h3>
+    <label for="userName">نامی که روویا صدایت می‌کند</label>
+    <input id="userName" maxlength="50" placeholder="مثلاً رضا">
+    <p class="small">اطلاعات این نسخه فقط در حافظهٔ محلی همین مرورگر ذخیره می‌شوند. این نسخه هنوز به مدل هوش مصنوعی آنلاین متصل نیست.</p>
     <div class="modal-actions">
-      <button id="exportChats">خروجی گرفتن از تاریخچه</button>
-      <button id="clearChats" class="secondary">پاک‌کردن همهٔ چت‌ها</button>
-      <button id="closeSettings" class="secondary">بستن</button>
+      <button class="btn primary" id="saveName">ذخیره نام</button>
+      <button class="btn" id="closeSettings">بستن</button>
+      <button class="btn" id="clearChats">پاک‌کردن همه چت‌ها</button>
     </div>
-  </section>
+  </div>
 </div>
 
 <script>
- 
-const chat = document.getElementById('chat');
-const form = document.getElementById('form');
-const input = document.getElementById('message');
-const historyBox = document.getElementById('history');
-const titleBox = document.getElementById('chatTitle');
-
-const CHATS_KEY = 'rovia_chats_v2';
+  
+const STORAGE_KEY = 'rovia_chats_v2';
 const ACTIVE_KEY = 'rovia_active_v2';
 const NAME_KEY = 'rovia_name_v2';
+const FACTS_KEY = 'rovia_facts_v3';
 
-function readChats() {
+const $ = id => document.getElementById(id);
+const chatBox = $('chat');
+const form = $('form');
+const input = $('message');
+const historyBox = $('history');
+const mobileHistory = $('mobileHistory');
+const titleBox = $('chatTitle');
+
+let chats = loadJSON(STORAGE_KEY, []);
+let activeId = localStorage.getItem(ACTIVE_KEY);
+let userName = localStorage.getItem(NAME_KEY) || '';
+let facts = loadJSON(FACTS_KEY, []);
+
+function loadJSON(key, fallback) {
   try {
-    const data = JSON.parse(localStorage.getItem(CHATS_KEY) || '[]');
-    return Array.isArray(data)
-      ? data.filter(c => c && typeof c.id === 'string' && Array.isArray(c.messages))
-      : [];
+    const value = JSON.parse(localStorage.getItem(key));
+    return value ?? fallback;
   } catch {
-    return [];
+    return fallback;
   }
 }
 
-let chats = readChats();
-let activeId = localStorage.getItem(ACTIVE_KEY);
+function saveAll() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
+  localStorage.setItem(ACTIVE_KEY, activeId || '');
+  localStorage.setItem(NAME_KEY, userName);
+  localStorage.setItem(FACTS_KEY, JSON.stringify(facts));
+}
 
 function makeId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-}
-
-function save() {
-  try {
-    localStorage.setItem(CHATS_KEY, JSON.stringify(chats));
-    if (activeId) localStorage.setItem(ACTIVE_KEY, activeId);
-    else localStorage.removeItem(ACTIVE_KEY);
-    return true;
-  } catch {
-    alert('ذخیره انجام نشد. ممکن است حافظهٔ مرورگر پر شده باشد.');
-    return false;
-  }
 }
 
 function currentChat() {
@@ -340,272 +175,352 @@ function currentChat() {
 }
 
 function createChat() {
-  const c = {
-    id: makeId(),
-    title: 'گفت‌وگوی جدید',
-    messages: [],
-    updatedAt: Date.now()
-  };
-
+  const c = { id: makeId(), title: 'گفت‌وگوی جدید', messages: [], created: Date.now() };
   chats.unshift(c);
   activeId = c.id;
-  save();
-  renderAll();
+  saveAll();
+  render();
   input.focus();
 }
 
-function addBubble(text, type) {
-  const el = document.createElement('div');
-  el.className = 'msg ' + type;
-  el.textContent = text;
-  chat.appendChild(el);
+function deleteChat(id) {
+  chats = chats.filter(c => c.id !== id);
+  if (activeId === id) activeId = chats[0]?.id || null;
+  if (!activeId) createChat();
+  saveAll();
+  render();
 }
 
-function renderChat() {
-  chat.replaceChildren();
+function addMessage(role, text) {
   const c = currentChat();
+  if (!c) return;
+  c.messages.push({ role, text, time: Date.now() });
+  if (c.title === 'گفت‌وگوی جدید' && role === 'user') {
+    c.title = text.slice(0, 32) + (text.length > 32 ? '…' : '');
+  }
+  saveAll();
+}
+
+function render() {
+  const c = currentChat();
+  chatBox.replaceChildren();
+  titleBox.textContent = c?.title || 'گفت‌وگوی جدید';
 
   if (!c || c.messages.length === 0) {
-    addBubble(
-      'سلام! من Rovia هستم 😊 از چی شروع کنیم؟',
-      'ai'
-    );
+    const welcome = document.createElement('div');
+    welcome.className = 'welcome';
+    welcome.id = 'welcome';
+    welcome.innerHTML = `
+      <div class="big-logo">✦</div>
+      <h1>سلام${userName ? ' ' + escapeHTML(userName) : ''}، من روویا هستم</h1>
+      <p>چه چیزی در ذهنته؟ از همین‌جا شروع کنیم.</p>
+      <div class="suggestions">
+        <button class="suggestion" data-prompt="خودت را معرفی کن">معرفی روویا</button>
+        <button class="suggestion" data-prompt="چه کارهایی می‌توانی انجام بدهی؟">چه کارهایی بلدی؟</button>
+        <button class="suggestion" data-prompt="اسم من رضا است">آزمایش حافظه</button>
+      </div>`;
+    chatBox.append(welcome);
   } else {
-    c.messages.forEach(m => addBubble(m.text, m.type));
+    c.messages.forEach(m => {
+      const wrap = document.createElement('div');
+      wrap.className = 'message ' + (m.role === 'user' ? 'user' : 'bot');
+      const label = document.createElement('div');
+      label.className = 'message-label';
+      label.textContent = m.role === 'user' ? (userName || 'شما') : '✦ روویا';
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.textContent = m.text;
+      wrap.append(label, bubble);
+      chatBox.append(wrap);
+    });
   }
 
-  titleBox.textContent = c ? c.title : 'گفت‌وگوی جدید';
-  chat.scrollTop = chat.scrollHeight;
+  renderHistory();
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function escapeHTML(text) {
+  return String(text).replace(/[&<>"']/g, ch => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  })[ch]);
 }
 
 function renderHistory() {
   historyBox.replaceChildren();
-
-  if (chats.length === 0) {
-    const empty = document.createElement('div');
-    empty.className = 'empty-history';
-    empty.textContent = 'هنوز گفت‌وگویی نداری. یک چت جدید بساز!';
-    historyBox.appendChild(empty);
-    return;
-  }
+  mobileHistory.replaceChildren();
 
   chats.forEach(c => {
     const row = document.createElement('div');
-    row.className = 'history-item';
-
+    row.className = 'history-item' + (c.id === activeId ? ' active' : '');
     const open = document.createElement('button');
-    open.className = 'history-open' + (c.id === activeId ? ' active' : '');
-    open.textContent = c.title || 'گفت‌وگوی جدید';
-    open.title = c.title;
+    open.className = 'history-item';
+    open.style.flex = '1';
+    open.style.minWidth = '0';
+    open.textContent = '▤ ' + c.title;
     open.onclick = () => {
       activeId = c.id;
-      save();
-      renderAll();
+      saveAll();
+      render();
     };
+    row.append(open);
 
     const del = document.createElement('button');
-    del.className = 'history-delete';
+    del.className = 'delete';
     del.textContent = '×';
-    del.title = 'حذف این گفت‌وگو';
-    del.setAttribute('aria-label', 'حذف ' + c.title);
-
+    del.title = 'حذف گفتگو';
     del.onclick = () => {
-      if (!confirm('این گفت‌وگو برای همیشه از این مرورگر حذف شود؟')) return;
-
-      chats = chats.filter(x => x.id !== c.id);
-
-      if (activeId === c.id) {
-        activeId = chats.length ? chats[0].id : null;
-      }
-
-      save();
-
-      if (!activeId) createChat();
-      else renderAll();
+      if (confirm('این گفتگو حذف شود؟')) deleteChat(c.id);
     };
+    row.append(del);
+    historyBox.append(row);
 
-    row.append(open, del);
-    historyBox.appendChild(row);
+    const mobile = document.createElement('button');
+    mobile.className = 'btn';
+    mobile.textContent = c.title;
+    mobile.onclick = () => {
+      activeId = c.id;
+      saveAll();
+      render();
+    };
+    mobileHistory.append(mobile);
   });
+
+  const newButton = document.createElement('button');
+  newButton.className = 'btn primary';
+  newButton.textContent = '＋ گفت‌وگوی جدید';
+  newButton.onclick = createChat;
+  mobileHistory.prepend(newButton);
 }
 
-function renderAll() {
-  renderChat();
-  renderHistory();
+function rememberFact(key, value) {
+  facts = facts.filter(f => f.key !== key);
+  facts.push({ key, value, time: Date.now() });
+  saveAll();
 }
 
-function choose(list) {
-  return list[Math.floor(Math.random() * list.length)];
+function findFact(key) {
+  return facts.find(f => f.key === key)?.value || '';
 }
 
-function answer(message) {
-  const t = message.toLowerCase().trim();
-  const name = localStorage.getItem(NAME_KEY) || '';
+function normalize(text) {
+  return text.toLowerCase()
+    .replace(/[ًٌٍَُِّْـ]/g, '')
+    .replace(/ي/g, 'ی')
+    .replace(/ك/g, 'ک')
+    .trim();
+}
 
-  if (t.includes('اسمم چیه') || t.includes('اسم من چیه')) {
-    return name
-      ? `اسمی که قبلاً بهم گفتی ${name} است. 😊`
-      : 'هنوز اسمت رو بهم نگفتی. می‌تونی بنویسی: اسم من ...';
-  }
+function findPastMessages(query) {
+  const words = normalize(query).split(/\s+/).filter(w => w.length > 2);
+  if (!words.length) return [];
 
-  const match = message.match(/اسم من\s+(.+)/);
-  if (match) {
-    const newName = match[1].trim().slice(0, 50);
-    if (newName) {
-      localStorage.setItem(NAME_KEY, newName);
-      return `خوشبختم ${newName}! 😊 این اسم را در همین مرورگر به خاطر می‌سپارم.`;
+  const results = [];
+  chats.forEach(c => {
+    c.messages.forEach(m => {
+      if (m.role !== 'user') return;
+      const text = normalize(m.text);
+      const score = words.filter(w => text.includes(w)).length;
+      if (score > 0) results.push({ text: m.text, score, title: c.title });
+    });
+  });
+  return results.sort((a, b) => b.score - a.score).slice(0, 3);
+}
+
+function respond(message) {
+  const raw = message.trim();
+  const t = normalize(raw);
+  const nameMatch = raw.match(/(?:اسم من|اسمم|من روویا رو صدا کن|من را)\s*(?:،|:)?\s*([آ-یA-Za-z][آ-یA-Za-z\s]{0,35}?)(?:\s+است|\s+هستم|[.!،؟]|$)/);
+
+  if (nameMatch && /اسم من|اسمم/.test(raw)) {
+    const name = nameMatch[1].trim().replace(/\s+/g, ' ');
+    if (name) {
+      userName = name;
+      rememberFact('name', name);
+      saveAll();
+      return `خوشحالم که شناختمت، ${name}! 😊 اسمت را در همین مرورگر ذخیره کردم.`;
     }
   }
 
-  if (/سلام|درود|صبح بخیر|شب بخیر/.test(t)) {
-    return choose([
-      `سلام${name ? ' ' + name : ''}! 😊 خوش اومدی. چه خبر؟`,
-      'سلام! دوست داری امروز دربارهٔ چی گپ بزنیم؟',
-      'سلام رفیق! 👋 من آماده‌ام گفت‌وگو کنیم.'
-    ]);
+  if (/اسم من چیه|اسمم چیه|من کی هستم|اسمم یادت/.test(t)) {
+    const savedName = findFact('name') || userName;
+    return savedName
+      ? `اسم تو ${savedName} است؛ این را از اطلاعات ذخیره‌شده در همین مرورگر می‌گویم.`
+      : 'هنوز اسمت را نمی‌دانم. می‌توانی بگویی «اسم من رضا است».';
   }
 
-  if (/خوبی|حالت چطوره|چه خبر/.test(t)) {
-    return choose([
-      'ممنون که پرسیدی! من آمادهٔ گپ زدنم. تو چطوری؟',
-      'من اینجام تا باهات گفت‌وگو کنم 😊 روزت چطور گذشته؟',
-      'همه‌چیز آماده‌ست برای یک گپ خوب! تو چه خبر؟'
-    ]);
+  const goalMatch = raw.match(/(?:هدف من|پروژه من|دارم روی پروژه)\s*(?:این است که|اینکه|:)?\s*(.{3,100})/);
+  if (goalMatch) {
+    rememberFact('goal', goalMatch[1].trim());
+    return 'این موضوع را برای گفتگوهای بعدی همین مرورگر یادداشت کردم. هر وقت خواستی می‌توانیم ادامه‌اش بدهیم.';
   }
 
-  if (/ممنون|مرسی|متشکرم/.test(t)) {
-    return choose([
-      'خواهش می‌کنم! 😊',
-      'قابلی نداشت، خوشحالم که صحبت می‌کنیم.',
-      'هر وقت خواستی می‌تونیم ادامه بدیم!'
-    ]);
+  if (/هدفم چیه|هدف من چی بود|پروژه من چی بود/.test(t)) {
+    const goal = findFact('goal');
+    return goal ? `چیزی که ذخیره کرده‌ام این است: ${goal}` :
+      'هنوز هدفی در حافظهٔ اطلاعاتی من ثبت نشده است. می‌توانی بگویی «هدف من ... است».';
   }
 
-  if (/خداحافظ|فعلاً|بای\b/.test(t)) {
-    return 'فعلاً! 👋 گفت‌وگوت ذخیره می‌شه و می‌تونی بعداً از تاریخچه برگردی.';
+  if (/چه چیزهایی درباره من میدونی|چی درباره من میدونی|چه چیزهایی یادت/.test(t)) {
+    const details = [];
+    const savedName = findFact('name') || userName;
+    const goal = findFact('goal');
+    if (savedName) details.push('نام: ' + savedName);
+    if (goal) details.push('هدف یا پروژه: ' + goal);
+    if (!details.length) return 'فعلاً اطلاعات شخصی مشخصی ذخیره نکرده‌ام. می‌توانی نام یا هدفت را به من بگویی.';
+    return 'این اطلاعات در حافظهٔ محلی ذخیره شده‌اند:\n' + details.map(x => '• ' + x).join('\n');
   }
 
-  if (/ناراحتم|حالم بده|روز بدی/.test(t)) {
-    return 'متأسفم که روز سختی داری. ❤️ اگه دوست داری، بیشتر بگو چی شده تا درباره‌اش حرف بزنیم.';
+  if (/یادت هست|یادت میاد|قبلا چی گفتم|قبلاً چی گفتم/.test(t)) {
+    const past = findPastMessages(raw.replace(/یادت هست|یادت میاد|قبلا چی گفتم|قبلاً چی گفتم/g, '').trim());
+    if (past.length) {
+      return 'چند پیام مرتبط از تاریخچه پیدا کردم:\n' +
+        past.map(x => '• «' + x.text + '» (گفتگو: ' + x.title + ')').join('\n');
+    }
+    const all = chats.flatMap(c => c.messages.filter(m => m.role === 'user').map(m => m.text));
+    if (all.length) return 'پیام‌های قبلی در تاریخچه هستند، اما برای این سؤال مورد مرتبطی پیدا نکردم. اگر موضوع را دقیق‌تر بگویی بهتر جست‌وجو می‌کنم.';
+    return 'هنوز پیام قبلی‌ای برای جست‌وجو وجود ندارد.';
   }
 
-  if (/جوک|لطیفه/.test(t)) {
-    return 'یه جوک کوچیک 😄 چرا برنامه‌نویس همیشه خونسرده؟ چون یاد گرفته باگ‌ها رو یکی‌یکی حل کنه!';
+  if (/سلام|درود|صبح بخیر|عصر بخیر|شب بخیر/.test(t)) {
+    return `سلام${userName ? ' ' + userName : ''}! 👋 خوش اومدی. امروز دوست داری دربارهٔ چی صحبت کنیم؟`;
   }
 
-  if (/بازی|گیم|روبلاکس|hoi4|هارتس آو آیرن/.test(t)) {
-    return '🎮 چه جالب! بیشتر دربارهٔ چه بازی‌ای دوست داری حرف بزنیم؟';
+  if (/خودت را معرفی کن|تو کی هستی|روویا چی هست|معرفی خودت/.test(t)) {
+    return 'من روویا هستم؛ یک دستیار شخصی ساده که در این نسخه می‌تواند گفتگوها را در مرورگر ذخیره کند، بعضی اطلاعات را به خاطر بسپارد و به پرسش‌های رایج پاسخ دهد. هنوز به مدل هوش مصنوعی آنلاین متصل نیستم.';
   }
 
-  if (/فوتبال|مسی|رونالدو/.test(t)) {
-    return '⚽ فوتبال همیشه موضوع جذابیه! دوست داری دربارهٔ بازیکن‌ها حرف بزنیم یا مسابقه‌ها؟';
+  if (/چه کارهایی می توانی|چه کارهایی بلدی|چیکار می تونی/.test(t)) {
+    return 'در این نسخه می‌توانم:\n• تاریخچهٔ گفتگوها را نگه دارم.\n• نام و چند اطلاعات مشخص را به خاطر بسپارم.\n• در پیام‌های قبلی جست‌وجو کنم.\n• به پرسش‌های رایج و سلام‌واحوال‌پرسی پاسخ بدهم.\n\nبرای پاسخ‌گویی آزاد و تحلیل واقعی، باید بعداً یک مدل هوش مصنوعی به روویا وصل شود.';
   }
 
-  if (/هوش مصنوعی|هوشمند|ربات/.test(t)) {
-    return 'هوش مصنوعی واقعی می‌تونه پیام رو تحلیل کنه و پاسخ تازه بسازه. Rovia در حال حاضر هنوز به مدل واقعی متصل نیست؛ جواب‌های این نسخه ساده و ازپیش‌تعریف‌شده‌اند.';
+  if (/ممنون|مرسی|سپاس/.test(t)) {
+    return 'خواهش می‌کنم! 😊 هر وقت خواستی ادامه می‌دهیم.';
   }
 
-  if (/چرا|چطور|چگونه/.test(t)) {
-    return 'سؤال خوبیه! این نسخه هنوز توانایی تحلیل آزاد همهٔ سؤال‌ها رو نداره. اگر موضوع رو ساده‌تر بگی، شاید بتونم با قواعد فعلی پاسخ مرتبط‌تری بدم.';
+  if (/خسته ام|حالم خوب نیست|ناراحتم/.test(t)) {
+    return 'متأسفم که این‌طور احساس می‌کنی. اگر دوست داری، می‌توانی بیشتر درباره‌اش بگویی تا با هم بررسی‌اش کنیم.';
   }
 
-  return choose([
-    'می‌تونی کمی بیشتر درباره‌اش توضیح بدی؟ 😊',
-    'جالبه! دوست داری بیشتر در موردش حرف بزنیم؟',
-    'متوجه شدم که می‌خوای دربارهٔ این موضوع صحبت کنی. از کدوم بخش شروع کنیم؟',
-    'هنوز مغز هوش مصنوعی واقعی به Rovia وصل نشده؛ این پاسخ خودکار بود. می‌تونی بیشتر توضیح بدی؟'
-  ]);
+  if (/ساعت چنده|امروز چندمه|تاریخ امروز/.test(t)) {
+    return 'برای اینکه تاریخ یا ساعت دقیق را بگویم، باید به منبع زمان معتبر متصل باشم. فعلاً نمی‌توانم آن را به‌صورت زنده بررسی کنم.';
+  }
+
+  if (/خبر|قیمت دلار|قیمت طلا|قیمت بیت کوین/.test(t)) {
+    return 'برای خبرها و قیمت‌های لحظه‌ای باید منبع زنده به روویا متصل شود. این نسخه به اینترنت برای دریافت داده‌های زنده وصل نیست.';
+  }
+
+  if (t.endsWith('؟') || t.endsWith('?')) {
+    return 'سؤالت را دریافت کردم. در این نسخه پاسخ‌ها بر اساس الگوهای ساده ساخته می‌شوند، پس ممکن است پاسخ دقیقش را نداشته باشم. می‌توانی سؤال را کمی واضح‌تر بنویسی یا موضوع را با جزئیات بیشتری توضیح بدهی.';
+  }
+
+  return `پیامت را دریافت کردم${userName ? '، ' + userName : ''}. 😊\n\nمی‌توانیم بیشتر دربارهٔ همین موضوع صحبت کنیم. توجه داشته باش که هنوز مدل هوش مصنوعی واقعی به روویا وصل نشده و پاسخ‌ها محدود به قواعد همین نسخه هستند.`;
 }
 
 function sendMessage(text) {
-  text = text.trim();
-  if (!text) return;
-
+  const message = (text ?? input.value).trim();
+  if (!message) return;
   if (!currentChat()) createChat();
 
-  const c = currentChat();
-  c.messages.push({ text, type: 'user' });
+  addMessage('user', message);
+  input.value = '';
+  input.style.height = 'auto';
+  render();
 
-  if (c.title === 'گفت‌وگوی جدید') {
-    c.title = text.length > 30 ? text.slice(0, 30) + '…' : text;
-  }
-
-  c.messages.push({ text: answer(text), type: 'ai' });
-  c.updatedAt = Date.now();
-
-  chats.sort((a, b) => b.updatedAt - a.updatedAt);
-  save();
-  renderAll();
+  const answer = respond(message);
+  addMessage('assistant', answer);
+  render();
+  input.focus();
 }
 
-form.addEventListener('submit', e => {
-  e.preventDefault();
-  const text = input.value;
-  if (!text.trim()) return;
-  input.value = '';
-  input.style.height = '48px';
-  sendMessage(text);
+$('newChat').onclick = createChat;
+$('mobileNew').onclick = createChat;
+
+form.addEventListener('submit', event => {
+  event.preventDefault();
+  sendMessage();
+});
+
+input.addEventListener('keydown', event => {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    sendMessage();
+  }
 });
 
 input.addEventListener('input', () => {
-  input.style.height = '48px';
-  input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+  input.style.height = 'auto';
+  input.style.height = Math.min(input.scrollHeight, 160) + 'px';
 });
 
-input.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    form.requestSubmit();
-  }
+document.addEventListener('click', event => {
+  const btn = event.target.closest('[data-prompt]');
+  if (btn) sendMessage(btn.dataset.prompt);
 });
 
-document.getElementById('newChat').addEventListener('click', createChat);
+$('settings').onclick = () => {
+  $('userName').value = userName;
+  $('settingsModal').style.display = 'flex';
+};
 
-const modal = document.getElementById('settingsModal');
+$('closeSettings').onclick = () => {
+  $('settingsModal').style.display = 'none';
+};
 
-document.getElementById('settings').addEventListener('click', () => {
-  modal.classList.add('show');
-});
+$('saveName').onclick = () => {
+  userName = $('userName').value.trim().slice(0, 50);
+  if (userName) rememberFact('name', userName);
+  else facts = facts.filter(f => f.key !== 'name');
+  saveAll();
+  $('settingsModal').style.display = 'none';
+  render();
+};
 
-document.getElementById('closeSettings').addEventListener('click', () => {
-  modal.classList.remove('show');
-});
+$('clearChats').onclick = () => {
+  if (!confirm('همهٔ گفتگوها حذف شوند؟ این کار قابل بازگشت نیست.')) return;
+  chats = [];
+  activeId = null;
+  createChat();
+  $('settingsModal').style.display = 'none';
+};
 
-modal.addEventListener('click', e => {
-  if (e.target === modal) modal.classList.remove('show');
-});
-
-document.getElementById('exportChats').addEventListener('click', () => {
-  const data = JSON.stringify(chats, null, 2);
-  const blob = new Blob([data], { type: 'application/json;charset=utf-8' });
+$('exportChats').onclick = () => {
+  const data = {
+    exportedAt: new Date().toISOString(),
+    chats,
+    userName,
+    facts
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'rovia-chat-history.json';
+  a.download = 'rovia-history.json';
   a.click();
   URL.revokeObjectURL(url);
-});
+};
 
-document.getElementById('clearChats').addEventListener('click', () => {
-  if (!confirm('همهٔ گفت‌وگوهای ذخیره‌شده پاک شوند؟ این کار قابل بازگشت نیست.')) return;
-
-  chats = [];
-  activeId = null;
-  localStorage.removeItem(CHATS_KEY);
-  localStorage.removeItem(ACTIVE_KEY);
-  createChat();
-  modal.classList.remove('show');
+$('settingsModal').addEventListener('click', event => {
+  if (event.target === $('settingsModal')) {
+    $('settingsModal').style.display = 'none';
+  }
 });
 
 if (!chats.length) {
-  createChat();
-} else {
-  if (!chats.some(c => c.id === activeId)) {
-    activeId = chats[0].id;
-  }
-  save();
-  renderAll();
+  const oldChats = loadJSON(STORAGE_KEY, []);
+  chats = Array.isArray(oldChats) ? oldChats : [];
 }
+
+if (!currentChat()) {
+  if (chats.length) activeId = chats[0].id;
+  else {
+    const c = { id: makeId(), title: 'گفت‌وگوی جدید', messages: [], created: Date.now() };
+    chats.push(c);
+    activeId = c.id;
+  }
+}
+
+render();
+saveAll();
 </script>
 </body>
 </html>
