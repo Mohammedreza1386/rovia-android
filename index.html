@@ -450,8 +450,7 @@ async function sendMessage(text) {
 
   try {
     const response = await fetch(
-      'https://rovia-ai-server.manochehrimohammad974.workers.dev/',
-      {
+      /api/chat
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
