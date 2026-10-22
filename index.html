@@ -416,20 +416,98 @@ function respond(message) {
   return `پیامت را دریافت کردم${userName ? '، ' + userName : ''}. 😊\n\nمی‌توانیم بیشتر دربارهٔ همین موضوع صحبت کنیم. توجه داشته باش که هنوز مدل هوش مصنوعی واقعی به روویا وصل نشده و پاسخ‌ها محدود به قواعد همین نسخه هستند.`;
 }
 
-function sendMessage(text) {
+let sendInProgress = false;
+
+async function sendMessage(text) {
   const message = (text ?? input.value).trim();
-  if (!message) return;
+  if (!message || sendInProgress) return;
+
   if (!currentChat()) createChat();
 
+  const chatId = currentChat().id;
   addMessage('user', message);
+
   input.value = '';
   input.style.height = 'auto';
+  sendInProgress = true;
+  input.disabled = true;
+  $('send').disabled = true;
+
+  const pendingId = 'pending-' + Date.now();
+  const chat = chats.find(c => c.id === chatId);
+
+  if (chat) {
+    chat.messages.push({
+      role: 'assistant',
+      text: 'در حال فکر کردن…',
+      time: Date.now(),
+      pendingId
+    });
+  }
+
+  saveAll();
   render();
 
-  const answer = respond(message);
-  addMessage('assistant', answer);
-  render();
-  input.focus();
+  try {
+    const response = await fetch(
+      'https://rovia-ai-server.manochehrimohammad974.workers.dev/',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message })
+      }
+    );
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(
+        data.details || data.error || `خطا (${response.status})`
+      );
+    }
+
+    if (typeof data.reply !== 'string' || !data.reply.trim()) {
+      throw new Error('پاسخ خالی از سرور دریافت شد.');
+    }
+
+    const targetChat = chats.find(c => c.id === chatId);
+
+    if (targetChat) {
+      targetChat.messages = targetChat.messages.filter(
+        m => m.pendingId !== pendingId
+      );
+
+      targetChat.messages.push({
+        role: 'assistant',
+        text: data.reply.trim(),
+        time: Date.now()
+      });
+    }
+  } catch (error) {
+    const targetChat = chats.find(c => c.id === chatId);
+
+    if (targetChat) {
+      targetChat.messages = targetChat.messages.filter(
+        m => m.pendingId !== pendingId
+      );
+
+      targetChat.messages.push({
+        role: 'assistant',
+        text: 'اتصال به هوش مصنوعی ناموفق بود. ' +
+          (error.message || 'لطفاً دوباره تلاش کن.'),
+        time: Date.now()
+      });
+    }
+  } finally {
+    saveAll();
+    sendInProgress = false;
+    input.disabled = false;
+    $('send').disabled = false;
+    render();
+    input.focus();
+  }
 }
 
 $('newChat').onclick = createChat;
